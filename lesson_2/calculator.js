@@ -1,10 +1,10 @@
 const readline = require('readline-sync');
-const MESSAGES = require('./calculator_messages.json')
+const MESSAGES = require('./calculator_messages.json');
 
 //TODO change output message to also display which operation was performed
 //(IE "The result of 5 plus 6 is: 11")
 let language;
-prompt("Please choose a language: 1) English 2) Japanese.")
+prompt("Please choose a language: 1) English 2) Japanese.");
 let languageChoice = readline.question();
 
 switch (languageChoice) {
