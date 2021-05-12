@@ -1,44 +1,57 @@
 const readline = require('readline-sync');
+const MESSAGES = require('./calculator_messages.json')
 
 //TODO change output message to also display which operation was performed
 //(IE "The result of 5 plus 6 is: 11")
+let language;
+prompt("Please choose a language: 1) English 2) Japanese.")
+let languageChoice = readline.question();
 
-console.log("Welcome to Calculator!");
+switch (languageChoice) {
+  case '1':
+    language = 'en';
+    break;
+  case '2':
+    language = 'jp';
+    break;
+}
+
+console.log(MESSAGES[language]['welcome']);
 let operation;
 let number1;
 let number2;
 let output;
 
 while (operation !== '5') {
-  prompt("What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide 5) Exit");
+  prompt(MESSAGES[language]['choose_operation']);
   operation = readline.question();
 
   if (operation === '5') {
-    notice("Closing calculator");
+    notice(MESSAGES[language]['closing']);
     break;
   }
 
   // check if operation input is valid
   if (!['1','2','3','4','5'].includes(operation)) {
-    notice("Sorry, that's not a valid choice.");
+    notice(MESSAGES[language]['invalid_choice']);
     continue;
   }
 
-  prompt("What's the first number?");
+  prompt(MESSAGES[language]['first_number']);
   number1 = readline.question();
 
   while (invalidNumber(number1)) {
-    notice("Sorry, that's not a valid number.");
-    prompt("What's the first number?");
+    notice(MESSAGES[language]['invalid_number']);
+    prompt(MESSAGES[language]['first_number']);
     number1 = readline.question();
   }
 
-  prompt("What's the second number?");
+  prompt(MESSAGES[language]['second_number']);
   number2 = readline.question();
 
   while (invalidNumber(number2)) {
-    notice("Sorry, that's not a valid number.");
-    prompt("What's the second number?");
+    notice(MESSAGES[language]['invalid_number']);
+    prompt(MESSAGES[language]['second_number']);
     number2 = readline.question();
   }
 
@@ -64,7 +77,7 @@ while (operation !== '5') {
   }
 
   if (output) {
-    console.log(`The result is: ${output}`);
+    console.log(`${MESSAGES[language]['result']} ${output}`);
   }
 }
 

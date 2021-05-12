@@ -1,0 +1,22 @@
+{
+  "en": {
+    "welcome" : "Hello, welcome to calculator!",
+    "choose_operation" : "What operation would you like to perform?\n1) Add 2) Subtract 3) Multiply 4) Divide 5) Exit",
+    "closing" : "Closing calculator",
+    "first_number" : "What's the first number?",
+    "second_number" : "What's the second number?",
+    "invalid_number" : "Sorry that's not a valid number.",
+    "invalid_choice" : "Sorry that's not a valid choice.",
+    "result" : "The result is:"
+  },
+  "jp" : {
+    "welcome" : "こんにちは、電卓へようこそ",
+    "choose_operation" : "どのような操作を実行したいですか？\n1)加算 2)減算 3)乗算 4)除算 5)終了",
+    "closing" : "電卓がシャットダウンしている",
+    "first_number" : "最初の番号は何ですか？",
+    "second_number" : "第二の番号は何ですか？",
+    "invalid_number" : "それは有効な番号ではありませんごめんなさい。",
+    "invalid_choice" : "それは有効な選択ではありません。",
+    "result" : "結果は次のとおりです:"
+  }
+}
