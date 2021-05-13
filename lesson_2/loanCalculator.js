@@ -9,7 +9,7 @@ let loanDurationInMonths = 0;
 let loanDuration = 0;
 
 //===============Main==============================
-getUserInput();
+handleUserInput();
 
 loanDurationInMonths = loanDuration * 12;
 
@@ -39,39 +39,17 @@ function roundIntoDollars(number) {
   return Math.round(number * 100) / 100;
 }
 
-function getUserInput() {
-  while(isZeroOrNegative(loanAmount)) {
-    prompt("What is the loan amount?");
-    loanAmount = Number(readline.prompt());
-    if (isZeroOrNegative(loanAmount)) {
-      prompt("Please input a positive, non zero number.")
-    }
-  }
-  
-  while(isNegative(annualPercentageRate)) {
-    prompt("What is the Annual Percentage Rate (APR) as a percent?");
-    annualPercentageRate = readline.prompt();
-    // extract just the number incase user appends '%'.
-    annualPercentageRate = Number(annualPercentageRate.replace(/[^-?0-9]/g,''));
-    if (isNegative(annualPercentageRate)) {
-      prompt("Please input a positive number or zero.")
-    }
-  }
-
-  while(isZeroOrNegative(loanDuration)) {
-    prompt("How long will the loan be in years?");
-    loanDuration = Number(readline.prompt());
-    if (isZeroOrNegative(loanDuration)) {
-      prompt("Please input a positive, non zero number.")
-    }
-  }
+function handleUserInput() {
+  handleLoanAmountInput();
+  handleAPRInput();
+  handleLoanDurationInput();
 }
 
 function printLoanInfo() {
-  message(`Your monthly payment will be: $${monthlyPayment}.`)
-  message(`Your monthly interest rate will be: ${monthlyIntrestRate}.`)
-  message(`Your total cost will be: $${totalCost}.`)
-  message(`Your total interest to be paid is: $${totalInterest}`)  
+  message(`Your monthly payment will be: $${monthlyPayment}.`);
+  message(`Your monthly interest rate will be: ${monthlyIntrestRate}.`);
+  message(`Your total cost will be: $${totalCost}.`);
+  message(`Your total interest to be paid is: $${totalInterest}`);
 }
 
 function calculateMonthlyInterestRate(APR) {
@@ -86,15 +64,15 @@ function calculateMonthlyPayment() {
   if (monthlyIntrestRate === 0) {
     return loanAmount / loanDurationInMonths;
   } else {
-    return loanAmount * (monthlyIntrestRate / (1 - Math.pow((1 + monthlyIntrestRate), (-loanDurationInMonths))));
+    return loanAmount * (monthlyIntrestRate /
+    (1 - Math.pow((1 + monthlyIntrestRate), (-loanDurationInMonths))));
   }
 }
 
 function isZeroOrNegative(num) {
   if (num <= 0) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
@@ -102,8 +80,39 @@ function isZeroOrNegative(num) {
 function isNegative(num) {
   if (num < 0) {
     return true;
-  }
-  else {
+  } else {
     return false;
+  }
+}
+
+function handleLoanAmountInput() {
+  while (isZeroOrNegative(loanAmount)) {
+    prompt("What is the loan amount?");
+    loanAmount = Number(readline.prompt());
+    if (isZeroOrNegative(loanAmount)) {
+      prompt("Please input a positive, non zero number.");
+    }
+  }
+}
+
+function handleAPRInput() {
+  while (isNegative(annualPercentageRate)) {
+    prompt("What is the Annual Percentage Rate (APR) as a percent?");
+    annualPercentageRate = readline.prompt();
+    // extract just the number incase user appends '%'.
+    annualPercentageRate = Number(annualPercentageRate.replace(/[^-?0-9]/g,''));
+    if (isNegative(annualPercentageRate)) {
+      prompt("Please input a positive number or zero.");
+    }
+  }
+}
+
+function handleLoanDurationInput() {
+  while (isZeroOrNegative(loanDuration)) {
+    prompt("How long will the loan be in years?");
+    loanDuration = Number(readline.prompt());
+    if (isZeroOrNegative(loanDuration)) {
+      prompt("Please input a positive, non zero number.");
+    }
   }
 }
