@@ -7,18 +7,19 @@ const NUMBER_OF_MATCHES_TO_WIN = 5;
 while (true)
 {
   let score = initializeScore();
-
+  let choice = '';
+  while (!chooseFirstPlayer(choice)) {
+    prompt('Who will go first this set? ([p]layer, [c]omputer, or [r]andom)');
+    choice = readline.question();
+  }
   while (true) {
     let board = initializeBoard();
-  
+   
+   
+    let firstMove = chooseFirstPlayer(choice);
     while (true) {
-      displayGame(board, score);
 
-      playerChoosesSquare(board);
-      if (someoneWon(board) || boardFull(board)) break;
-    
-      computerChoosesSquare(board);
-      if (someoneWon(board) || boardFull(board)) break;
+      if (handleTurn(board, score, firstMove)) break;
     }
     
     console.clear();
@@ -294,4 +295,44 @@ function playAgain() {
   }
   if (answer === 'y') return true;
   if (answer === 'n') return false;
+}
+
+function handleTurn(board, score, firstMove) {
+  if (firstMove === 'player') {
+    displayGame(board, score);
+    playerChoosesSquare(board);
+    if (wonOrFull(board)) return true;
+
+    computerChoosesSquare(board);
+    if (wonOrFull(board)) return true;
+  } else if (firstMove === 'computer'){
+    computerChoosesSquare(board);
+    if (wonOrFull(board)) return true;
+
+    displayGame(board, score);
+    playerChoosesSquare(board);
+    if (wonOrFull(board)) return true;
+  }
+}
+
+function wonOrFull(board) {
+  if (someoneWon(board) || boardFull(board)) return true;
+}
+
+function chooseFirstPlayer(choice) {
+  if (!choice) return false;
+  switch (choice[0].toLowerCase()) {
+    case 'p':
+      return 'player';
+    case 'c':
+      return 'computer';
+    case 'r':
+      if (Math.floor(Math.random() * 2) === 1) {
+        return 'player';
+      } else {
+        return 'computer';
+      }
+    default:
+      return false;
+  }
 }
