@@ -1,35 +1,56 @@
 const readline = require('readline-sync');
 
-const CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'j', 'q', 'k', 'a'];
-let deck = [];
+const CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace'];
 
-let playerHand = [];
-let computerHand = [];
+while (true) {
+  let deck = [];
+  let gameOver = false;
+  
+  let playerHand = [];
+  let computerHand = [];
+  
+  deal(deck, playerHand, computerHand);
+  console.clear();
+  displayHands(playerHand, computerHand);
 
-initializeDeck(deck, CARDS);
-
-console.log(deck);
-console.log(deck.length);
-shuffle(deck);
-console.log(deck);
-console.log(deck.length);
-
-for(let i = 0; i < 5; i++) {
-  drawCard(deck, playerHand);
+  while (true) {
+    prompt("[H]it or [S]tay?")
+    let answer = readline.question();
+  
+    if (answer.length > 0 && answer[0].toLowerCase() === 'h') {
+      drawCard(deck, playerHand);
+    } else if (answer.length > 0 && answer[0].toLowerCase() === 's') {
+      break
+    } else {
+      alert("Sorry that's not a valid input, press enter to try again.")
+      readline.prompt();
+    }
+    console.clear();
+    displayHands(playerHand, computerHand);
+  
+    if (checkForBust(playerHand)) {
+      alert("Sorry you busted!");
+      alert("Dealer wins!");
+      gameOver = true;
+      break;
+    }
+  }
+  if (!gameOver) {
+    computerTurn(deck, computerHand);
+    if (valueOfHand(computerHand) < 21) {
+      if (checkForTie(playerHand, computerHand)) {
+        displayAllCards(playerHand, 'Player');
+        alert("It's a tie!")
+      } else {
+        displayAllCards(playerHand, 'Player');
+        alert(`${decideWinner(playerHand, computerHand)} wins!!`)
+      }
+      
+    }
+  }
+  if(!playAgain()) break;
 }
-console.log(playerHand);
-console.log(deck);
-console.log(deck.length);
-console.log('==========================================');
-console.log(valueOfHand(playerHand));
-
-computerHand = [5, 6, 'a',];
-console.log(valueOfHand(computerHand));
-computerHand = [4, 6, 'a',];
-console.log(valueOfHand(computerHand));
-computerHand = [7, 'a', 'a',];
-console.log(valueOfHand(computerHand));
-
+alert("Thanks for playing!");
 
 function initializeDeck(deck, cards) {
   cards.forEach(card => {
@@ -56,22 +77,125 @@ function valueOfHand(hand) {
   hand.forEach(card => {
     if (Number(card) === card) {
       handValue += card;
-    } else if (/[jqk]/.test(card)) {
+    } else if (/\b(?:jack|queen|king)\b/gi.test(card)) {
       handValue += 10;
-    } else if (card === 'a') {
+    } else if (card === 'Ace') {
       aceCount += 1;
     }
   });
+
   if (aceCount === 0) {
     return handValue;
-  } else while (aceCount > 0) {
-    if (handValue + 11 > 21) {
-      handValue += 1;
-      aceCount -= 1;
-    } else {
-      handValue += 11;
-      aceCount -= 1;
+  } else {
+    while (aceCount > 0) {
+      if (handValue + 11 > 21) {
+        handValue += 1;
+        aceCount -= 1;
+      } else {
+        handValue += 11;
+        aceCount -= 1;
+      }
     }
   }
   return handValue;
+}
+
+function deal(deck, playerHand, computerHand) {
+  initializeDeck(deck, CARDS);
+  shuffle(deck);
+
+  drawCard(deck, playerHand);
+  drawCard(deck, playerHand);
+
+  drawCard(deck, computerHand);
+  drawCard(deck, computerHand);
+}
+
+function prompt(string) {
+  console.log(`==> ${string}`);
+}
+
+function alert(string) {
+  console.log(`*****${string}*****`);
+}
+
+function displayKnownCard(hand, person) {
+  let knownCard = hand[0];
+  console.log(`${person} has ${knownCard} and unknown card`);
+}
+
+function displayAllCards(hand, person) {
+  console.log(
+    `${person} has ${joinOr(hand, ', ', 'and')}. Total value: ${valueOfHand(hand)}`);
+}
+
+function checkForBust(hand) {
+  if (valueOfHand(hand) > 21) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function displayHands(playerHand, computerHand) {
+  displayAllCards(playerHand, 'Player');
+  displayKnownCard(computerHand,'Dealer');
+}
+
+function joinOr(array, seperator = ', ', string = 'or') {
+  if (array.length <= 1) {
+    return array.join('');
+  }
+  let finalString = '';
+  let lastElement = array.length - 1;
+
+  finalString = array.slice(0, lastElement).join(seperator);
+  finalString = finalString.concat('', `${seperator}${string} ${array[lastElement]}`)
+  return finalString;
+}
+
+function computerTurn(deck, computerHand) {
+  while (valueOfHand(computerHand) < 17) {
+    drawCard(deck, computerHand);
+    console.log('The dealer takes a card. \n==>Press Enter.');
+    readline.prompt();
+  }
+  if (checkForBust(computerHand)) {
+    displayAllCards(computerHand, 'Dealer');
+    alert("Dealer busts!");
+    alert("Player wins!");
+  } else {
+    displayAllCards(computerHand, 'Dealer');
+  }
+}
+
+function decideWinner(playerHand, computerHand) {
+  if (valueOfHand(playerHand) > valueOfHand(computerHand)) {
+    return "Player";
+  } else {
+    return "Dealer";
+  }
+}
+
+function checkForTie(playerHand, computerHand) {
+  if (valueOfHand(playerHand) === valueOfHand(computerHand)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function playAgain() {
+  let answer;
+  while (true) {
+    prompt('Play again? (y or n)');
+    answer = readline.question().toLowerCase();
+    if (answer !== 'y' && answer !== 'n') {
+      prompt("Sorry thats not a valid choice.")
+    } else {
+      break;
+    }
+  }
+  if (answer === 'y') return true;
+  if (answer === 'n') return false;
 }
