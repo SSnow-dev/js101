@@ -1,8 +1,14 @@
 const readline = require('readline-sync');
 
 const CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace'];
+const BUST_VALUE = 21;
+const COMPUTERS_MAX_HIT_VALUE = 17;
+const MATCHES_TO_PLAY = 5;
+
+let score = initializeScore();
 
 while (true) {
+  //initialize game
   let deck = [];
   let gameOver = false;
 
@@ -10,13 +16,14 @@ while (true) {
   let computerHand = [];
 
   deal(deck, playerHand, computerHand);
+
   console.clear();
   displayHands(playerHand, computerHand);
 
   while (true) {
     prompt("[H]it or [S]tay?");
     let answer = readline.question();
-
+    //loop untill valid input
     if (answer.length > 0 && answer[0].toLowerCase() === 'h') {
       drawCard(deck, playerHand);
     } else if (answer.length > 0 && answer[0].toLowerCase() === 's') {
@@ -30,22 +37,35 @@ while (true) {
 
     if (checkForBust(playerHand)) {
       alert("Sorry you busted!");
-      alert("Dealer wins!");
+      handleWinner('Dealer', score);
       gameOver = true;
       break;
     }
   }
+  //if player did not bust
   if (!gameOver) {
-    computerTurn(deck, computerHand);
-    if (valueOfHand(computerHand) < 21) {
+    computerTurn(deck, computerHand, score);
+    if (valueOfHand(computerHand) <= BUST_VALUE) {
       if (checkForTie(playerHand, computerHand)) {
         displayAllCards(playerHand, 'Player');
         alert("It's a tie!");
       } else {
         displayAllCards(playerHand, 'Player');
-        alert(`${decideWinner(playerHand, computerHand)} wins!!`);
+        let winner = decideWinner(playerHand, computerHand);
+        console.log(winner);
+        handleWinner(winner, score);
       }
     }
+  }
+  //look if any play has max amount of match wins,
+  //if so reset score object and display winner.
+  if (checkForScoreOf(score, MATCHES_TO_PLAY)) {
+    alert(`${checkForScoreOf(score, MATCHES_TO_PLAY)} has won ${MATCHES_TO_PLAY} matches and wins the set!`);
+    score = initializeScore();
+  }
+  //display score if it is not 0
+  if (score.Player !== 0 || score.Dealer !== 0) {
+    alert(`The score is Player: ${score.Player} and Dealer: ${score.Dealer}`);
   }
   if (!playAgain()) break;
 }
@@ -86,7 +106,7 @@ function valueOfHand(hand) {
     return handValue;
   } else {
     while (aceCount > 0) {
-      if (handValue + 11 > 21) {
+      if (handValue + 11 > BUST_VALUE) {
         handValue += 1;
         aceCount -= 1;
       } else {
@@ -128,7 +148,7 @@ function displayAllCards(hand, person) {
 }
 
 function checkForBust(hand) {
-  if (valueOfHand(hand) > 21) {
+  if (valueOfHand(hand) > BUST_VALUE) {
     return true;
   } else {
     return false;
@@ -152,8 +172,8 @@ function joinOr(array, seperator = ', ', string = 'or') {
   return finalString;
 }
 
-function computerTurn(deck, computerHand) {
-  while (valueOfHand(computerHand) < 17) {
+function computerTurn(deck, computerHand, score) {
+  while (valueOfHand(computerHand) < COMPUTERS_MAX_HIT_VALUE) {
     drawCard(deck, computerHand);
     console.log('The dealer takes a card. \n==>Press Enter.');
     readline.prompt();
@@ -161,7 +181,7 @@ function computerTurn(deck, computerHand) {
   if (checkForBust(computerHand)) {
     displayAllCards(computerHand, 'Dealer');
     alert("Dealer busts!");
-    alert("Player wins!");
+    handleWinner('Player', score);
   } else {
     displayAllCards(computerHand, 'Dealer');
   }
@@ -195,4 +215,26 @@ function playAgain() {
     }
   }
   return answer === 'y';
+}
+
+function initializeScore() {
+  return {
+    Player: 0,
+    Dealer: 0
+  };
+}
+
+function checkForScoreOf(score, wins) {
+  if (score.Player === wins) {
+    return 'Player';
+  }
+  if (score.Dealer === wins) {
+    return 'Dealer';
+  }
+  return '';
+}
+
+function handleWinner(winner, score) {
+  alert(`${winner} wins!`);
+  score[winner]++;
 }
