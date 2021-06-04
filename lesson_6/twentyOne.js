@@ -5,29 +5,29 @@ const CARDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King', 'Ace'];
 while (true) {
   let deck = [];
   let gameOver = false;
-  
+
   let playerHand = [];
   let computerHand = [];
-  
+
   deal(deck, playerHand, computerHand);
   console.clear();
   displayHands(playerHand, computerHand);
 
   while (true) {
-    prompt("[H]it or [S]tay?")
+    prompt("[H]it or [S]tay?");
     let answer = readline.question();
-  
+
     if (answer.length > 0 && answer[0].toLowerCase() === 'h') {
       drawCard(deck, playerHand);
     } else if (answer.length > 0 && answer[0].toLowerCase() === 's') {
-      break
+      break;
     } else {
-      alert("Sorry that's not a valid input, press enter to try again.")
+      alert("Sorry that's not a valid input, press enter to try again.");
       readline.prompt();
     }
     console.clear();
     displayHands(playerHand, computerHand);
-  
+
     if (checkForBust(playerHand)) {
       alert("Sorry you busted!");
       alert("Dealer wins!");
@@ -40,21 +40,20 @@ while (true) {
     if (valueOfHand(computerHand) < 21) {
       if (checkForTie(playerHand, computerHand)) {
         displayAllCards(playerHand, 'Player');
-        alert("It's a tie!")
+        alert("It's a tie!");
       } else {
         displayAllCards(playerHand, 'Player');
-        alert(`${decideWinner(playerHand, computerHand)} wins!!`)
+        alert(`${decideWinner(playerHand, computerHand)} wins!!`);
       }
-      
     }
   }
-  if(!playAgain()) break;
+  if (!playAgain()) break;
 }
 alert("Thanks for playing!");
 
 function initializeDeck(deck, cards) {
   cards.forEach(card => {
-    for (let i = 0; i < 4; i++) {
+    for (let numOfEachCard = 0; numOfEachCard < 4; numOfEachCard++) {
       deck.push(card);
     }
   });
@@ -83,7 +82,6 @@ function valueOfHand(hand) {
       aceCount += 1;
     }
   });
-
   if (aceCount === 0) {
     return handValue;
   } else {
@@ -150,7 +148,7 @@ function joinOr(array, seperator = ', ', string = 'or') {
   let lastElement = array.length - 1;
 
   finalString = array.slice(0, lastElement).join(seperator);
-  finalString = finalString.concat('', `${seperator}${string} ${array[lastElement]}`)
+  finalString = finalString.concat('', `${seperator}${string} ${array[lastElement]}`);
   return finalString;
 }
 
@@ -191,11 +189,10 @@ function playAgain() {
     prompt('Play again? (y or n)');
     answer = readline.question().toLowerCase();
     if (answer !== 'y' && answer !== 'n') {
-      prompt("Sorry thats not a valid choice.")
+      prompt("Sorry thats not a valid choice.");
     } else {
       break;
     }
   }
-  if (answer === 'y') return true;
-  if (answer === 'n') return false;
+  return answer === 'y';
 }
