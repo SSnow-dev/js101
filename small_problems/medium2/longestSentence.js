@@ -1,3 +1,5 @@
+const PUNCTUATION = /([.!?])/g;
+
 let longText =
   'Four score and seven years ago our fathers brought forth on this ' +
   'continent a new nation, conceived in liberty, and dedicated to the ' +
@@ -49,4 +51,28 @@ function longestSentence(string) {
   let longest = '';
   let longestWordCount = 0;
   
+  sentences = convertToSentences(string);
+  sentences.forEach(sentence => {
+    if (countWords(sentence) > longestWordCount) {
+      longest = sentence;
+      longestWordCount = countWords(sentence);
+    }
+  });
+  console.log(`${longest} \n\nThe longest sentence has ${longestWordCount} words.\n`)
+}
+
+function convertToSentences(string) {
+  let sentenceArray = [];
+  let array = string.split(PUNCTUATION);
+  for (let i = 0; i < array.length -1; i+= 2) {
+    let temp = [];
+    temp.push(array[i], array[i + 1]);
+    sentenceArray.push(temp.join('').trim());
+  
+  }
+  return sentenceArray;
+}
+
+function countWords(string) {
+  return string.split(' ').length;
 }
